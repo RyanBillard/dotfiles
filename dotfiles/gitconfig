@@ -2,7 +2,7 @@
     name = Ryan Billard
 	email = ryanagbillard@gmail.com
 [include]
-	path=~/.gitconfig.local
+	path = ~/.gitconfig.local
 [alias]
 	co = checkout
 	d = diff
