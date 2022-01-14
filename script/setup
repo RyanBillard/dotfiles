@@ -1,0 +1,15 @@
+#!/bin/sh
+# Install all dotfiles into the home directory
+
+set -ex
+
+DOTFILESDIR=~/.dotfiles
+
+for i in $DOTFILESDIR/dotfiles/*; do
+    echo "Installing $(basename $i)..."
+    if $(test -f ~/.$(basename $i)); then
+        echo "Removing existing file ~/.$(basename $i)"
+        rm -ri ~/.$(basename $i)
+    fi
+    ln -s $i ~/.$(basename $i)
+done
