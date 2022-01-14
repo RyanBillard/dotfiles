@@ -3,13 +3,15 @@
 
 set -ex
 
-DOTFILESDIR=~/.dotfiles
+DOTFILESDIR=~/dotfiles
 
-for i in $DOTFILESDIR/dotfiles/*; do
-    echo "Installing $(basename $i)..."
-    if $(test -f ~/.$(basename $i)); then
-        echo "Removing existing file ~/.$(basename $i)"
-        rm -ri ~/.$(basename $i)
-    fi
-    ln -s $i ~/.$(basename $i)
-done
+if $(test -d $DOTFILESDIR/dotfiles); then
+    for i in $DOTFILESDIR/dotfiles/*; do
+        echo "Installing $(basename $i)..."
+        if $(test -f ~/.$(basename $i)); then
+            echo "Removing existing file ~/.$(basename $i)"
+            rm -ri ~/.$(basename $i)
+        fi
+        ln -s $i ~/.$(basename $i)
+    done
+fi

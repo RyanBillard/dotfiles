@@ -1,2 +1,10 @@
 [user]
     name = Ryan Billard
+	email = ryanagbillard@gmail.com
+[include]
+	path=~/.gitconfig.local
+[alias]
+	co = checkout
+	d = diff
+	s = status
+	re = rebase origin/main
