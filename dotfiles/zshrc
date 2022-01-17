@@ -4,8 +4,21 @@ HISTFILE=~/.history
 setopt inc_append_history
 setopt share_history
 setopt hist_ignore_dups
+setopt prompt_subst
 
-PS1="%(?.🤓.🥺) %F{cyan}%~ $%f "
+# Find and set branch name var if in git repository.
+function git_branch_name()
+{
+  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]];
+  then
+    :
+  else
+    echo ' '$branch
+  fi
+}
+
+PS1='%(?.🤓.🥺) %F{cyan}%~%f%F{magenta}$(git_branch_name)%f $ '
 
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
