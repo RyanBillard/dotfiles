@@ -24,7 +24,7 @@ if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
 
-if [ "$SPIN" == "1" ]; then
+if [ "$SPIN" ]; then
   source /etc/zsh/zshrc.default.inc.zsh
 fi
 
