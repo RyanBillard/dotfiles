@@ -23,3 +23,8 @@ PS1='%(?.🤓.🥺) %F{cyan}%~%f%F{magenta}$(git_branch_name)%f $ '
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
+
+if [ "$SPIN" == "1" ]; then
+  source /etc/zsh/zshrc.default.inc.zsh
+fi
+
