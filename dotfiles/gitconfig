@@ -7,4 +7,5 @@
 	co = checkout
 	d = diff
 	s = status
+	fm = fetch origin main
 	re = rebase origin/main
