@@ -9,3 +9,4 @@
 	s = status
 	fm = fetch origin main
 	re = rebase origin/main
+	fre = !git fm && git re
