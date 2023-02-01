@@ -8,5 +8,6 @@
 	d = diff
 	s = status
 	fm = fetch origin main
-	re = rebase origin/main
-	fre = !git fm && git re
+	um = !git co main && git pull origin main --ff && git co -
+	re = rebase main
+	ure = !git um && git re
