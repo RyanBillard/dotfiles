@@ -7,7 +7,9 @@
 	co = checkout
 	d = diff
 	s = status
-	fm = fetch origin main
 	um = !git co main && git pull origin main --ff && git co -
 	re = rebase main
 	ure = !git um && git re
+	amend = commit -a --amend --no-edit
+	nb = !git co main && git um && git co -b
+	cu = "!git fetch --all -p && git branch -vv | grep ': gone]' | awk '{ print $1 }' | xargs git branch -D"
