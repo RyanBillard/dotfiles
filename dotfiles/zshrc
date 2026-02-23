@@ -43,7 +43,7 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=()
+plugins=(terraform)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -105,3 +105,79 @@ eval "$(rbenv init - zsh)"
 
 # ssh setup for github
 ssh-add --apple-use-keychain  ~/.ssh/id_ed25519
+
+# copy-password util for copying aws passwords for notion
+function copy-password() {
+  local user="$1"
+  local env="$2"
+  local secret_id=""
+
+  if [[ "$user" == "tier1" || "$user" == "tier2" ]]; then
+    secret_id="$env-postgres-user-$user"
+  elif [[ "$user" == "developer" ]]; then
+    secret_id="gw-$env-postgres-$user"
+  elif [[ "$user" == "notionadmin" ]]; then
+    secret_id="gw-$env-postgres-admin"
+  else
+    echo "Unsupported user type: $user"
+    return 1
+  fi
+
+  local secret="$(aws secretsmanager get-secret-value --profile infrastructure --secret-id "$secret_id" | jq -jr '.SecretString | fromjson')"
+
+  local PGPASSWORD=$(echo "$secret" | jq -jr '.password')
+
+  if [[ -n "$PGPASSWORD" ]]; then
+    echo -n "$PGPASSWORD" | pbcopy
+    echo "PGPASSWORD copied to clipboard."
+  else
+    echo "Failed to extract PGPASSWORD from secret."
+    return 1
+  fi
+}
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# turn github permalink into main link
+ml() {
+  # Check if an argument was provided; if not, read from the clipboard
+  local url="$1"
+  if [ -z "$url" ]; then
+    url=$(pbpaste)
+    if [ -z "$url" ]; then
+      echo "Error: No URL provided and clipboard is empty."
+      return 1
+    fi
+  fi
+
+  local main_url
+
+  # Adjust the regex for zsh compatibility
+  if [[ "$url" =~ "^(https://github.com/[^/]+/[^/]+)/blob/[a-f0-9]+(/.+)$" ]]; then
+    # Reconstruct URL with 'main' instead of the commit hash
+    main_url="${match[1]}/blob/main${match[2]}"
+    
+    # Output the main branch permalink
+    echo "$main_url"
+
+    # Copy the result to the clipboard (macOS only)
+    echo -n "$main_url" | pbcopy
+    echo "(Copied to clipboard)"
+  else
+    echo "Error: Invalid GitHub permalink. Ensure the link contains a commit hash."
+    return 1
+  fi
+}
+
+# go path
+export PATH="/usr/local/go/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+
+# terraform workspaces prompt
+
+RPROMPT='$(tf_prompt_info)'
+RPROMPT='$(tf_version_prompt_info)'
+
+alias claude="/Users/ryanb/.claude/local/claude"
+export RIPGREP_CONFIG_PATH="/Users/ryanb/notion-next/.ripgreprc"
+alias jitaws="notion jit create-request --appName AWS --resourceName=\"(AWS SSO PROD) Infrastructure\" --duration=\"12 hours\""
+alias jitsr="notion jit create-request --appName AWS --resourceName=\"(AWS SSO PROD) Infrastructure\" --duration=\"12 hours\" --justification=\"settings redis\""
